@@ -20,12 +20,19 @@ public class Main {
         if (resource == null)
             throw new IllegalArgumentException("file is not found!");
 
-        DataObject config = DataObject.fromJson(resource);
+        DataObject config = DataObject.fromJson(resource).getObject("warden");
+        DataObject activityData = config.getObject("activity");
 
-        JDA jda = JDABuilder.createDefault(config.getObject("warden").getString("token"))
+        // build JDA
+        JDA jda = JDABuilder.createDefault(config.getString("token"))
                 .setChunkingFilter(ChunkingFilter.ALL)
-                .setStatus(OnlineStatus.IDLE)
-                .setActivity(Activity.playing("in the Deep Dark"))
+                .setStatus(OnlineStatus.valueOf(config.getString("status")))
+                .setActivity(
+                        Activity.of(
+                                Activity.ActivityType.valueOf(activityData.getString("type")),
+                                activityData.getString("name")
+                        )
+                )
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableIntents(
                         GatewayIntent.GUILD_EMOJIS,

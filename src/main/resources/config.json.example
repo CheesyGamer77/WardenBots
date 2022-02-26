@@ -1,5 +1,10 @@
 {
     "warden": {
-        "token": "YOUR_BOT_TOKEN_HERE"
+        "token": "YOUR_BOT_TOKEN_HERE",
+        "status": "IDLE",
+        "activity": {
+            "type": "PLAYING",
+            "name": "in the deep dark"
+        }
     }
 }
