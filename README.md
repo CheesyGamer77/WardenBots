@@ -1,3 +1,3 @@
 # Warden
 
-Online community moderation bot for Discord
+An in-development online community moderation bot for Discord
