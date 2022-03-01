@@ -1,6 +1,5 @@
 package pw.cheesygamer77.wardenbots.internal.db.statements;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -60,9 +59,7 @@ public interface BuildableSQLStatement<T> {
             return getResultSetMapper().apply(executeQuery(connection));
         }
         catch (SQLException error) {
-            LOGGER.error(
-                    "Encountered an unexpected SQLException while executing+mapping query result: "
-                            + ExceptionUtils.getStackTrace(error));
+            LOGGER.error("Encountered an unexpected SQLException while executing+mapping query result: ", error);
             return null;
         }
     }
