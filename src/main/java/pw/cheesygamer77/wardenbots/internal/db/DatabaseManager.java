@@ -82,7 +82,6 @@ public final class DatabaseManager {
      */
     public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModlogChannel channel) {
         HashMap<ModlogChannel, Long> channelIDMapping = fetchAllModLogChannels(guild);
-        LOGGER.debug("Mod Log Channel configuration for guild " + guild.getId() + " is: " + channelIDMapping);
 
         Long channelID = channelIDMapping.getOrDefault(channel, null);
         if(channelID != null) {
@@ -111,7 +110,7 @@ public final class DatabaseManager {
             statement.setString(1, guildHash);
             statement.executeUpdate();
 
-            LOGGER.info("Registered new guild: " + guildID);
+            LOGGER.debug("Registered new guild: " + guildID);
         }
         catch (Exception error) {
             logQueryError(error);
