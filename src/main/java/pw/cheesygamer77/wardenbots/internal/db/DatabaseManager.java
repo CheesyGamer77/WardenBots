@@ -1,18 +1,18 @@
 package pw.cheesygamer77.wardenbots.internal.db;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.guild.UnavailableGuildJoinedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.wardenbots.core.moderation.ModlogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.UserReputation;
 import pw.cheesygamer77.wardenbots.internal.Hasher;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.HashMap;
 
 /**
@@ -92,5 +92,107 @@ public final class DatabaseManager {
         }
 
         return null;
+    }
+
+    /**
+     * Runs all the necessary queries to register a new {@link Guild}
+     * into Warden's database, given the guild's ID. Attempts to register an already registered guild
+     * will be ignored silently.
+     * @param guildID The ID of the guild to register
+     */
+    private static void registerNewGuild(@NotNull Long guildID) {
+        String guildHash = Hasher.hashify(guildID);
+
+        try (Connection connection = DriverManager.getConnection(getURL())) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT OR IGNORE INTO " + Table.MODLOG_CHANNELS + "(Guild) VALUES (?)"
+            );
+
+            statement.setString(1, guildHash);
+            statement.executeUpdate();
+
+            LOGGER.info("Registered new guild: " + guildID);
+        }
+        catch (Exception error) {
+            logQueryError(error);
+        }
+    }
+
+    /**
+     * Runs all the necessary queries to register a new {@link Guild} into Warden's database.
+     * Attempts to register an already registered guild will be ignored silently.
+     * @param guild The guild to register
+     */
+    public static void registerNewGuild(@NotNull Guild guild) {
+        registerNewGuild(guild.getIdLong());
+    }
+
+    /**
+     * Runs all the necessary queries to register an unavailable {@link Guild} into
+     * Warden's database. Attempts to register an already registered guild will be ignored silently.
+     * @param event The {@link UnavailableGuildJoinedEvent} containing the unavailable guild's ID
+     */
+    public static void registerNewGuild(@NotNull UnavailableGuildJoinedEvent event) {
+        registerNewGuild(event.getGuildIdLong());
+    }
+
+    /**
+     * Sets the {@link UserReputation} for a particular {@link Member}.
+     * If a reputation entry already exists, the existing value is overridden.
+     * @param member The member to set the reputation for
+     * @param value The value to set
+     * @see UserReputation.Level
+     */
+    public static void setUserReputation(@NotNull Member member, double value) {
+        try (Connection connection = DriverManager.getConnection(getURL())) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO " + Table.USER_REPUTATION + "(User, Guild, ReputationLevel) VALUES (?, ?, ?) " +
+                            "ON CONFLICT(User, Guild) DO UPDATE SET ReputationLevel = ?"
+            );
+
+            statement.setString(1, Hasher.hashify(member.getIdLong()));
+            statement.setString(2, Hasher.hashify(member.getGuild().getIdLong()));
+            statement.setDouble(3, value);
+            statement.setDouble(4, value);
+
+            statement.executeUpdate();
+        }
+        catch (Exception error) {
+            logQueryError(error);
+        }
+    }
+
+    /**
+     * Fetches the {@link UserReputation} for a particular {@link Member}.
+     *
+     * If the user has no entry in the database, the user is set to a default reputation level.
+     * If an error occurred while fetching, a default reputation level is returned, though unlike
+     * missing entries, the default reputation level is not set in the database itself.
+     * @param member The user to fetch the reputation for
+     * @return The user's reputation
+     */
+    public static @NotNull UserReputation fetchUserReputation(@NotNull Member member) {
+        try (Connection connection = DriverManager.getConnection(getURL())) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM " + Table.USER_REPUTATION + " WHERE User = ? AND Guild = ?"
+            );
+
+            statement.setString(1, Hasher.hashify(member.getIdLong()));
+            statement.setString(2, Hasher.hashify(member.getGuild().getIdLong()));
+
+            ResultSet rs = statement.executeQuery();
+
+            if(!rs.isClosed())
+                return new UserReputation(rs.getDouble("ReputationLevel"));
+
+            // insert new reputation entry
+            setUserReputation(member, 0d);
+            return new UserReputation(0d);
+        }
+        catch (SQLException error) {
+            logQueryError(error);
+        }
+
+        return new UserReputation(0d);
     }
 }
