@@ -1,19 +1,25 @@
 package pw.cheesygamer77.wardenbots;
 
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.data.DataObject;
+import org.reflections.Reflections;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class Main {
-    public static void main(String[] args) throws LoginException, InterruptedException {
+    public static void main(String[] args) throws LoginException, InterruptedException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         // load config json
         InputStream resource = Main.class.getResourceAsStream("/config.json");
 
@@ -23,8 +29,17 @@ public class Main {
         DataObject config = DataObject.fromJson(resource).getObject("warden");
         DataObject activityData = config.getObject("activity");
 
+        // gather all listeners
+        List<Object> out = new ArrayList<>();
+        Reflections reflections = new Reflections("pw.cheesygamer77.wardenbots.listeners");
+        Set<Class<? extends ListenerAdapter>> adapters = reflections.getSubTypesOf(ListenerAdapter.class);
+        for(Class<? extends ListenerAdapter> adapter : adapters) {
+            out.add(adapter.getDeclaredConstructor().newInstance());
+            LoggerFactory.getLogger(adapter).debug("Successfully loaded");
+        }
+
         // build JDA
-        JDA jda = JDABuilder.createDefault(config.getString("token"))
+        JDABuilder.createDefault(config.getString("token"))
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setStatus(OnlineStatus.valueOf(config.getString("status")))
                 .setActivity(
@@ -40,6 +55,9 @@ public class Main {
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_BANS)
+                .addEventListeners(
+                        out.toArray()
+                )
                 .build()
                 .awaitReady();
     }
