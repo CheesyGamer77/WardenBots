@@ -104,42 +104,44 @@ public class MessageEventsListener extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
-        MessageEmbed logEmbed;
-        if(messageCache.containsKey(event.getMessageIdLong())) {
-            // cached message was deleted
-            SerializableMessage cachedMessage = messageCache.get(event.getMessageIdLong());
-
-            logEmbed = new EmbedBuilder()
-                    .setAuthor(cachedMessage.getAuthor())
-                    .setTitle("Message Deleted")
-                    .setDescription(
-                            "Message sent by " + cachedMessage.getAuthor().getAsMention()
-                                    + " was deleted in " + cachedMessage.getTextChannel().getAsMention())
-                    .setColor(DiscordColor.GOLD)
-                    .addFields(cachedMessage, true, "Message")
-                    .setFooter(cachedMessage)
-                    .setTimestamp(Instant.now())
-                    .build();
-        }
-        else {
-            // uncached message was deleted
-            logEmbed = new EmbedBuilder()
-                    .setTitle("Message Deleted (Uncached)")
-                    .setDescription("An uncached message was deleted")
-                    .setColor(DiscordColor.DARK_GOLD)
-                    .setFooter("Message ID: " + event.getMessageIdLong())
-                    .setTimestamp(Instant.now())
-                    .build();
-        }
-
         TextChannel channel = ModlogChannel.MESSAGE_DELETES.fetch(event.getGuild());
-        messageCache.remove(event.getMessageIdLong());
         if(channel != null) {
-            channel.sendMessage(new MessageBuilder()
-                    .setContent(event.getMessageId())
-                    .setEmbeds(logEmbed)
-                    .build()
+            MessageEmbed logEmbed;
+            if(messageCache.containsKey(event.getMessageIdLong())) {
+                // cached message was deleted
+                SerializableMessage cachedMessage = messageCache.get(event.getMessageIdLong());
+
+                logEmbed = new EmbedBuilder()
+                        .setAuthor(cachedMessage.getAuthor())
+                        .setTitle("Message Deleted")
+                        .setDescription(
+                                "Message sent by " + cachedMessage.getAuthor().getAsMention()
+                                        + " was deleted in " + cachedMessage.getTextChannel().getAsMention())
+                        .setColor(DiscordColor.GOLD)
+                        .addFields(cachedMessage, true, "Message")
+                        .setFooter(cachedMessage)
+                        .setTimestamp(Instant.now())
+                        .build();
+            }
+            else {
+                // uncached message was deleted
+                logEmbed = new EmbedBuilder()
+                        .setTitle("Message Deleted (Uncached)")
+                        .setDescription("An uncached message was deleted")
+                        .setColor(DiscordColor.DARK_GOLD)
+                        .setFooter("Message ID: " + event.getMessageIdLong())
+                        .setTimestamp(Instant.now())
+                        .build();
+            }
+
+            channel.sendMessage(
+                    new MessageBuilder()
+                            .setContent(event.getMessageId())
+                            .setEmbeds(logEmbed)
+                            .build()
             ).queue();
         }
+
+        messageCache.remove(event.getMessageIdLong());
     }
 }
