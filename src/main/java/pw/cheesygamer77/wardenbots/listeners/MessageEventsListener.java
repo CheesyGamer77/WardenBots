@@ -18,7 +18,7 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.wardenbots.core.DiscordColor;
 import pw.cheesygamer77.wardenbots.core.builders.EmbedBuilder;
-import pw.cheesygamer77.wardenbots.core.moderation.ModlogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
 import pw.cheesygamer77.wardenbots.internal.serializers.SerializableMessage;
 
 import java.time.Duration;
@@ -70,7 +70,7 @@ public class MessageEventsListener extends ListenerAdapter {
         long messageID = event.getMessageIdLong();
         Message after = event.getMessage();
 
-        TextChannel channel = ModlogChannel.MESSAGE_EDITS.fetch(event.getGuild());
+        TextChannel channel = ModLogChannel.MESSAGE_EDITS.fetch(event.getGuild());
         if(channel != null) {
             User author = event.getAuthor();
 
@@ -108,7 +108,7 @@ public class MessageEventsListener extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
-        TextChannel channel = ModlogChannel.MESSAGE_DELETES.fetch(event.getGuild());
+        TextChannel channel = ModLogChannel.MESSAGE_DELETES.fetch(event.getGuild());
         if(channel != null) {
             MessageEmbed logEmbed;
             if(messageCache.containsKey(event.getMessageIdLong())) {

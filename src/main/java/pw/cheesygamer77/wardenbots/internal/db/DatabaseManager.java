@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pw.cheesygamer77.wardenbots.core.moderation.ModlogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
 import pw.cheesygamer77.wardenbots.core.moderation.UserReputation;
 import pw.cheesygamer77.wardenbots.internal.Hasher;
 
@@ -38,15 +38,15 @@ public final class DatabaseManager {
      * Fetches the mod log channel configuration for a particular {@link Guild}.
      *
      * This fetches the entire configuration. To fetch an exact {@link TextChannel} mod log channel,
-     * use {@link DatabaseManager#fetchModLogChannel(Guild, ModlogChannel)} instead.
+     * use {@link DatabaseManager#fetchModLogChannel(Guild, ModLogChannel)} instead.
      *
      * If an error occurs or there is no configuration for the guild, an empty mapping will be returned.
      * @param guild The guild to fetch the mod log channels for
-     * @return A Hash Map of {@link ModlogChannel} and Long pairs. Each Long corresponds to the stored
+     * @return A Hash Map of {@link ModLogChannel} and Long pairs. Each Long corresponds to the stored
      * channel ID for the particular ModlogChannel.
      */
-    public static @NotNull HashMap<ModlogChannel, Long> fetchAllModLogChannels(@NotNull Guild guild) {
-        HashMap<ModlogChannel, Long> out = new HashMap<>();
+    public static @NotNull HashMap<ModLogChannel, Long> fetchAllModLogChannels(@NotNull Guild guild) {
+        HashMap<ModLogChannel, Long> out = new HashMap<>();
 
         try (Connection connection = DriverManager.getConnection(getURL())) {
             PreparedStatement statement = connection.prepareStatement(
@@ -59,7 +59,7 @@ public final class DatabaseManager {
 
             if(!rs.isClosed())
                 // add each entry to the output map
-                for (ModlogChannel channel : ModlogChannel.values())
+                for (ModLogChannel channel : ModLogChannel.values())
                     out.put(channel, rs.getLong(channel.getDatabaseColumnName()));
             else
                 LOGGER.warn(
@@ -75,13 +75,13 @@ public final class DatabaseManager {
     }
 
     /**
-     * Fetches a {@link TextChannel} designated as a particular {@link ModlogChannel} for a {@link Guild}
+     * Fetches a {@link TextChannel} designated as a particular {@link ModLogChannel} for a {@link Guild}
      * @param guild The guild to fetch the channel from
      * @param channel The channel type to fetch
-     * @return The {@link TextChannel} used for a particular {@link ModlogChannel}, or null if it doesn't exist.
+     * @return The {@link TextChannel} used for a particular {@link ModLogChannel}, or null if it doesn't exist.
      */
-    public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModlogChannel channel) {
-        HashMap<ModlogChannel, Long> channelIDMapping = fetchAllModLogChannels(guild);
+    public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModLogChannel channel) {
+        HashMap<ModLogChannel, Long> channelIDMapping = fetchAllModLogChannels(guild);
 
         Long channelID = channelIDMapping.getOrDefault(channel, null);
         if(channelID != null) {

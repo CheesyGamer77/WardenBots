@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.wardenbots.core.DiscordColor;
 import pw.cheesygamer77.wardenbots.core.builders.EmbedBuilder;
-import pw.cheesygamer77.wardenbots.core.moderation.ModlogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
 import pw.cheesygamer77.wardenbots.internal.layouts.UserChangesLayouts;
 
 import java.awt.*;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class UserUpdateEventsListener extends ListenerAdapter {
     @Override
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
-        TextChannel channel = ModlogChannel.USER_CHANGES.fetch(event.getGuild());
+        TextChannel channel = ModLogChannel.USER_CHANGES.fetch(event.getGuild());
         if(channel != null) {
             String before = event.getOldNickname();
             String after = event.getNewNickname();
@@ -81,7 +81,7 @@ public class UserUpdateEventsListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
-        TextChannel channel = ModlogChannel.USER_CHANGES.fetch(event.getGuild());
+        TextChannel channel = ModLogChannel.USER_CHANGES.fetch(event.getGuild());
         if(channel != null) {
             Member member = event.getMember();
 
@@ -126,7 +126,7 @@ public class UserUpdateEventsListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRoleRemove(@NotNull GuildMemberRoleRemoveEvent event) {
-        TextChannel channel = ModlogChannel.USER_CHANGES.fetch(event.getGuild());
+        TextChannel channel = ModLogChannel.USER_CHANGES.fetch(event.getGuild());
         if(channel != null) {
             Member member = event.getMember();
 
