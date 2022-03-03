@@ -26,9 +26,6 @@ public class Main {
         if (resource == null)
             throw new IllegalArgumentException("file is not found!");
 
-        DataObject config = DataObject.fromJson(resource).getObject("warden");
-        DataObject activityData = config.getObject("activity");
-
         // gather all listeners
         List<Object> out = new ArrayList<>();
         Reflections reflections = new Reflections("pw.cheesygamer77.wardenbots.listeners");
@@ -37,6 +34,10 @@ public class Main {
             out.add(adapter.getDeclaredConstructor().newInstance());
             LoggerFactory.getLogger(adapter).debug("Successfully loaded");
         }
+
+        // retrieve config
+        DataObject config = DataObject.fromJson(resource).getObject("warden");
+        DataObject activityData = config.getObject("activity");
 
         // build JDA
         JDABuilder.createDefault(config.getString("token"))
@@ -59,6 +60,7 @@ public class Main {
                         out.toArray()
                 )
                 .build()
-                .awaitReady();
+                .awaitReady()
+                .setRequiredScopes("applications.commands");
     }
 }
