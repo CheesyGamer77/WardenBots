@@ -58,11 +58,15 @@ public class MessageEventsListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        // TODO: Add content filter integration
+
         messageCache.put(event.getMessageIdLong(), new SerializableMessage(event.getMessage()));
     }
 
     @Override
     public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
+        // TODO: Add content filter integration
+
         long messageID = event.getMessageIdLong();
         Message after = event.getMessage();
 
