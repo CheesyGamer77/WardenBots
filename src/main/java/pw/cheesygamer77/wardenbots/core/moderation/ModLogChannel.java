@@ -2,12 +2,16 @@ package pw.cheesygamer77.wardenbots.core.moderation;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pw.cheesygamer77.wardenbots.internal.db.DatabaseManager;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * Enum class representing a particular mod log channel type.
@@ -32,8 +36,20 @@ public enum ModLogChannel {
     VOICE_EVENTS,
     THREAD_EVENTS;
 
+    /**
+     * Returns the name of the mod log channel type in title case form
+     * @return The title case form of the type
+     */
+    public @NotNull String getTitle() {
+        return WordUtils.capitalizeFully(name().toLowerCase(Locale.ROOT).replace("_", " "));
+    }
+
+    /**
+     * Returns the name of the mod log channel type's corresponding database column
+     * @return The database column name of the type
+     */
     public @NotNull String getDatabaseColumnName() {
-        return WordUtils.capitalizeFully(name().toLowerCase(Locale.ROOT).replace("_", " ")).replace(" ", "") + "ChannelID";
+        return getTitle().replace(" ", "") + "ChannelID";
     }
 
     /**
@@ -43,5 +59,16 @@ public enum ModLogChannel {
      */
     public @Nullable TextChannel fetch(@NotNull Guild guild) {
         return DatabaseManager.fetchModLogChannel(guild, this);
+    }
+
+
+    /**
+     * Returns a {@link java.util.List} of {@link Command.Choice}s for each of this enum's values
+     * @return A list of valid choices
+     */
+    public static Collection<Command.Choice> getOptionChoices() {
+        return Arrays.stream(values())
+                .map(value -> new Command.Choice(value.getTitle(), value.name()))
+                .collect(Collectors.toList());
     }
 }
