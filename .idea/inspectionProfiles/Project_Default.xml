@@ -1,0 +1,13 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="MavenPackageUpdate" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="excludeList">
+        <list>
+          <!-- Maven kept suggesting for us to Apache Commons Codec to some goofy beta version which is super broken-->
+          <option value="commons-codec:commons-codec" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
