@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
+import pw.cheesygamer77.cheedautilities.commands.CommandListener;
+import pw.cheesygamer77.wardenbots.commands.WhoisCommand;
 
 import javax.security.auth.login.LoginException;
 import java.io.InputStream;
@@ -39,6 +41,10 @@ public class Main {
         DataObject config = DataObject.fromJson(resource).getObject("warden");
         DataObject activityData = config.getObject("activity");
 
+        // build command listener
+        CommandListener commandListener = new CommandListener();
+        commandListener.addCommand(new WhoisCommand());
+
         // build JDA
         JDABuilder.createDefault(config.getString("token"))
                 .setChunkingFilter(ChunkingFilter.ALL)
@@ -58,6 +64,9 @@ public class Main {
                         GatewayIntent.GUILD_BANS)
                 .addEventListeners(
                         out.toArray()
+                )
+                .addEventListeners(
+                        commandListener
                 )
                 .build()
                 .awaitReady()
