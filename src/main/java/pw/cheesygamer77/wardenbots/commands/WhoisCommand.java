@@ -61,7 +61,7 @@ public class WhoisCommand extends SlashCommand {
     public void invoke(@NotNull SlashCommandInteractionEvent event) {
         OptionMapping userMapping = event.getOption("user");
 
-        // set target user (the command author if no user specified
+        // set target user (the command author if no user specified)
         User target;
         if(userMapping != null)
             target = userMapping.getAsUser();
