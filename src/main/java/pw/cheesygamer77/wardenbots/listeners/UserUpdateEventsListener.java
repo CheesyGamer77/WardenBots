@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import pw.cheesygamer77.wardenbots.core.DiscordColor;
+import pw.cheesygamer77.cheedautilities.DiscordColor;
 import pw.cheesygamer77.wardenbots.core.builders.EmbedBuilder;
 import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
 import pw.cheesygamer77.wardenbots.internal.layouts.UserChangesLayouts;

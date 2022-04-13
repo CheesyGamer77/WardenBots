@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pw.cheesygamer77.wardenbots.core.DiscordColor;
+import pw.cheesygamer77.cheedautilities.DiscordColor;
 import pw.cheesygamer77.wardenbots.core.builders.EmbedBuilder;
 import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
 
