@@ -4,7 +4,9 @@ import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public final class SerializableUser {
+import java.io.Serializable;
+
+public final class SerializableUser implements Serializable {
     private final long id;
     private final String name;
     private final String discriminator;
