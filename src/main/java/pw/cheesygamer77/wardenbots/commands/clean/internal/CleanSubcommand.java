@@ -3,6 +3,7 @@ package pw.cheesygamer77.wardenbots.commands.clean.internal;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
@@ -35,11 +36,12 @@ public abstract class CleanSubcommand extends Subcommand {
     public void invoke(@NotNull SlashCommandInteractionEvent event) {
         // TODO: Allow guilds to specify whether replies to mod command invocations should be ephemeral or not
         event.deferReply().queue();
+        InteractionHook hook = event.getInteraction().getHook();
 
         // get count
         OptionMapping countMapping = event.getOption("count");
         if(countMapping == null) {
-            event.reply("`count` option cannot be empty").queue();
+            hook.editOriginal("`count` option cannot be empty").queue();
             return;
         }
         int count = countMapping.getAsInt();
@@ -54,14 +56,14 @@ public abstract class CleanSubcommand extends Subcommand {
 
             // somewhat redundant in the current configuration but best practice
             if(channel == null) {
-                event.reply("`channel` option needs to be a text channel").queue();  // boring, but works
+                hook.editOriginal("`channel` option needs to be a text channel").queue();  // boring, but works
                 return;
             }
         }
 
         // do purging
         purge(count, channel)
-                .thenAccept(onComplete -> event.getInteraction().getHook()
+                .thenAccept(onComplete -> hook
                         .editOriginal(getResultMessage(count, channel))
                         .queue());
     }
