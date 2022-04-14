@@ -21,6 +21,10 @@ public abstract class CleanSubcommand extends Subcommand {
         super(new SubcommandData(name, description).addOptions(CleanCommands.COUNT_OPTION, CleanCommands.CHANNEL_OPTION));
     }
 
+    public CleanSubcommand(@NotNull SubcommandData data) {
+        super(data.addOptions(CleanCommands.COUNT_OPTION, CleanCommands.CHANNEL_OPTION));
+    }
+
     public abstract @NotNull Predicate<Message> getPredicate();
 
     public @NotNull Message getResultMessage(int count, @NotNull TextChannel channel) {
