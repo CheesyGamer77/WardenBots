@@ -27,6 +27,7 @@ public class CleanCommands extends SlashCommand {
         addSubcommand(new AnySubcommand());
         addSubcommand(new BotsSubcommand());
         addSubcommand(new HumansSubcommand());
+        addSubcommand(new TextSubcommand());
     }
 
     @Override
