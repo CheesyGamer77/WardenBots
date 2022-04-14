@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.utils.data.DataObject;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.cheedautilities.commands.CommandListener;
+import pw.cheesygamer77.wardenbots.commands.BanCommand;
+import pw.cheesygamer77.wardenbots.commands.UnbanCommand;
 import pw.cheesygamer77.wardenbots.commands.WhoisCommand;
 import pw.cheesygamer77.wardenbots.commands.clean.CleanCommands;
 
@@ -46,6 +48,8 @@ public class Main {
         CommandListener commandListener = new CommandListener();
         commandListener.addCommand(new WhoisCommand());
         commandListener.addCommand(new CleanCommands());
+        commandListener.addCommand(new BanCommand());
+        commandListener.addCommand(new UnbanCommand());
 
         // build JDA
         JDABuilder.createDefault(config.getString("token"))
