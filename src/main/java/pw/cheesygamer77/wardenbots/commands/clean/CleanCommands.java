@@ -26,6 +26,7 @@ public class CleanCommands extends SlashCommand {
         addPredicate(event -> event.getGuild() != null && Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE));
         addSubcommand(new AnySubcommand());
         addSubcommand(new BotsSubcommand());
+        addSubcommand(new HumansSubcommand());
     }
 
     @Override
