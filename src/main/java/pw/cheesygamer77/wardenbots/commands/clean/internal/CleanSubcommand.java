@@ -1,5 +1,6 @@
 package pw.cheesygamer77.wardenbots.commands.clean.internal;
 
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.commands.slash.Subcommand;
 import pw.cheesygamer77.wardenbots.commands.clean.CleanCommands;
+import pw.cheesygamer77.wardenbots.core.EmbedUtil;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -21,7 +23,11 @@ public abstract class CleanSubcommand extends Subcommand {
 
     public abstract @NotNull Predicate<Message> getPredicate();
 
-    public abstract @NotNull Message getResultMessage(int count, @NotNull TextChannel channel);
+    public @NotNull Message getResultMessage(int count, @NotNull TextChannel channel) {
+        return new MessageBuilder().setEmbeds(
+                EmbedUtil.getSuccess("Cleaned " + count + " messages in " + channel.getAsMention())
+        ).build();
+    }
 
     protected CompletableFuture<Void> purge(int count, @NotNull TextChannel channel) {
         return channel.getIterableHistory()
