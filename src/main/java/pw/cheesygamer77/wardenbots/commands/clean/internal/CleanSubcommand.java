@@ -33,7 +33,7 @@ public abstract class CleanSubcommand extends Subcommand {
         ).build();
     }
 
-    protected CompletableFuture<Void> purge(int count, @NotNull TextChannel channel) {
+    protected CompletableFuture<Void> clean(int count, @NotNull TextChannel channel) {
         return channel.getIterableHistory()
                 .takeAsync(count)
                 .thenApply(messages -> messages.stream()
@@ -72,7 +72,7 @@ public abstract class CleanSubcommand extends Subcommand {
         }
 
         // do purging
-        purge(count, channel)
+        clean(count, channel)
                 .thenAccept(onComplete -> hook
                         .editOriginal(getResultMessage(count, channel))
                         .queue());
