@@ -12,6 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.cheedautilities.commands.CommandListener;
 import pw.cheesygamer77.wardenbots.commands.WhoisCommand;
+import pw.cheesygamer77.wardenbots.commands.clean.CleanCommands;
 
 import javax.security.auth.login.LoginException;
 import java.io.InputStream;
@@ -44,6 +45,7 @@ public class Main {
         // build command listener
         CommandListener commandListener = new CommandListener();
         commandListener.addCommand(new WhoisCommand());
+        commandListener.addCommand(new CleanCommands());
 
         // build JDA
         JDABuilder.createDefault(config.getString("token"))
