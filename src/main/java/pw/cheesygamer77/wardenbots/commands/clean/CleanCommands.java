@@ -25,6 +25,7 @@ public class CleanCommands extends SlashCommand {
         super(Commands.slash("clean", "Commands to clean up unwanted messages"));
         addPredicate(event -> event.getGuild() != null && Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE));
         addSubcommand(new AnySubcommand());
+        addSubcommand(new BotsSubcommand());
     }
 
     @Override
