@@ -7,4 +7,5 @@ package pw.cheesygamer77.wardenbots.internal.db;
 public final class Table {
     public static final String MODLOG_CHANNELS = "ModLogChannels";
     public static final String USER_REPUTATION = "UserReputation";
+    public static final String GLOBAL_USER_DATA = "GlobalUserData";
 }

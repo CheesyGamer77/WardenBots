@@ -3,11 +3,13 @@ package pw.cheesygamer77.wardenbots.internal.db;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.UnavailableGuildJoinedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pw.cheesygamer77.wardenbots.core.UserType;
 import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
 import pw.cheesygamer77.wardenbots.core.moderation.UserReputation;
 import pw.cheesygamer77.wardenbots.internal.Hasher;
@@ -193,5 +195,24 @@ public final class DatabaseManager {
         }
 
         return new UserReputation(0d);
+    }
+
+    public static @NotNull UserType fetchUserType(@NotNull User user) {
+        try (Connection connection = DriverManager.getConnection(getURL())) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM " + Table.GLOBAL_USER_DATA + " WHERE User = ? LIMIT 1"
+            );
+
+            statement.setString(1, Hasher.hashify(user.getId()));
+
+            ResultSet rs = statement.executeQuery();
+
+            if(!rs.isClosed())
+                return UserType.valueOf(rs.getString("UserType"));
+        } catch (SQLException error) {
+            logQueryError(error);
+        }
+
+        return UserType.UNKNOWN;
     }
 }
