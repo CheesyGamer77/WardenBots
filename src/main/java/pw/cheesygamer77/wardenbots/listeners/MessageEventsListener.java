@@ -60,7 +60,9 @@ public class MessageEventsListener extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         // TODO: Add content filter integration
 
-        messageCache.put(event.getMessageIdLong(), new SerializableMessage(event.getMessage()));
+        // ignore messages from direct messages, cause frankly we don't care about those anyways
+        if(event.getMessage().isFromGuild())
+            messageCache.put(event.getMessageIdLong(), new SerializableMessage(event.getMessage()));
     }
 
     @Override
