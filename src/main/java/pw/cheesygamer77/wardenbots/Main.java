@@ -15,6 +15,7 @@ import pw.cheesygamer77.wardenbots.commands.BanCommand;
 import pw.cheesygamer77.wardenbots.commands.UnbanCommand;
 import pw.cheesygamer77.wardenbots.commands.WhoisCommand;
 import pw.cheesygamer77.wardenbots.commands.clean.CleanCommands;
+import pw.cheesygamer77.wardenbots.commands.config.ConfigCommands;
 import pw.cheesygamer77.wardenbots.commands.role.RoleCommands;
 
 import javax.security.auth.login.LoginException;
@@ -52,6 +53,7 @@ public class Main {
         commandListener.addCommand(new BanCommand());
         commandListener.addCommand(new UnbanCommand());
         commandListener.addCommand(new RoleCommands());
+        commandListener.addCommand(new ConfigCommands());
 
         // build JDA
         JDABuilder.createDefault(config.getString("token"))
