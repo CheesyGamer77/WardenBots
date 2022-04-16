@@ -60,8 +60,11 @@ public class MessageEventsListener extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         // TODO: Add content filter integration
 
-        // ignore messages from direct messages, cause frankly we don't care about those anyways
-        if(event.getMessage().isFromGuild())
+        // only cache guild messages and non-system messages
+        // this is because non-guild messages have no sense to be handled, and system messages
+        // have no need to be logged in addition to the fact that they contain their own weird set of quirks
+        Message message = event.getMessage();
+        if(message.isFromGuild() && !message.getType().isSystem())
             messageCache.put(event.getMessageIdLong(), new SerializableMessage(event.getMessage()));
     }
 
@@ -71,6 +74,9 @@ public class MessageEventsListener extends ListenerAdapter {
 
         long messageID = event.getMessageIdLong();
         Message after = event.getMessage();
+
+        // ignore dm messages, system messages, and messages that are in response to an interaction
+        if(!after.isFromGuild() || after.getType().isSystem() || after.getInteraction() != null) return;
 
         TextChannel channel = ModLogChannel.MESSAGE_EDITS.fetch(event.getGuild());
         if(channel != null) {
