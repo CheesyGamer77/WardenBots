@@ -46,6 +46,8 @@ public final class DatabaseManager {
      * @param guild The guild to fetch the mod log channels for
      * @return A Hash Map of {@link ModLogChannel} and Long pairs. Each Long corresponds to the stored
      * channel ID for the particular ModlogChannel.
+     * @see DatabaseManager#fetchModLogChannel(Guild, ModLogChannel)
+     * @see DatabaseManager#setModLogChannel(ModLogChannel, TextChannel, Guild)
      */
     public static @NotNull HashMap<ModLogChannel, Long> fetchAllModLogChannels(@NotNull Guild guild) {
         HashMap<ModLogChannel, Long> out = new HashMap<>();
@@ -85,6 +87,7 @@ public final class DatabaseManager {
      * @param guild The guild to fetch the channel from
      * @param channel The channel type to fetch
      * @return The {@link TextChannel} used for a particular {@link ModLogChannel}, or null if it doesn't exist.
+     * @see DatabaseManager#setModLogChannel(ModLogChannel, TextChannel, Guild) 
      */
     public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModLogChannel channel) {
         HashMap<ModLogChannel, Long> channelIDMapping = fetchAllModLogChannels(guild);
@@ -97,6 +100,38 @@ public final class DatabaseManager {
         }
 
         return null;
+    }
+
+    /**
+     * Sets a {@link TextChannel} to be used as a particular {@link Guild}'s {@link ModLogChannel}
+     * @param type The {@link ModLogChannel} type to set the channel to
+     * @param channel The {@link TextChannel} to set as the log channel
+     * @param guild The {@link Guild} to set the {@link ModLogChannel} of
+     * @return Whether the channel was set successfully or not
+     * @see DatabaseManager#fetchModLogChannel(Guild, ModLogChannel)
+     * @see DatabaseManager#fetchAllModLogChannels(Guild)
+     */
+    public static boolean setModLogChannel(@NotNull ModLogChannel type, @NotNull TextChannel channel, @NotNull Guild guild) {
+        String guildHash = Hasher.hashify(guild.getId());
+        String columnName = type.getDatabaseColumnName();
+
+        try(Connection connection = DriverManager.getConnection(getURL())) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO " + Table.MODLOG_CHANNELS + "(Guild, " + columnName + ") VALUES (?, ?) " +
+                            "ON CONFLICT(Guild) DO UPDATE SET " + columnName + " = ?"
+            );
+
+            statement.setString(1, guildHash);
+            statement.setLong(2, channel.getIdLong());
+
+            statement.executeUpdate();
+            return true;
+        }
+        catch (SQLException error) {
+            logQueryError(error);
+        }
+
+        return false;
     }
 
     /**
