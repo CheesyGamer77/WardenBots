@@ -35,13 +35,6 @@
             <version>2.0.0-alpha.4</version>
         </dependency>
 
-        <!-- JSON -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20220320</version>
-        </dependency>
-
         <!-- Logging (logback) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
