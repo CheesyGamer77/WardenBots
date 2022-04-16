@@ -68,11 +68,11 @@ public enum UserType {
      * @param user The user to retrieve the UserType of
      * @return The type
      */
-    public static UserType fetch(@NotNull User user) {
+    public static @NotNull UserType fetch(@NotNull User user) {
         return DatabaseManager.fetchUserType(user);
     }
 
-    public static UserType fetch(@NotNull Member member) {
+    public static @NotNull UserType fetch(@NotNull Member member) {
         return fetch(member.getUser());
     }
 }
