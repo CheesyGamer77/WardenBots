@@ -123,6 +123,7 @@ public final class DatabaseManager {
 
             statement.setString(1, guildHash);
             statement.setLong(2, channel.getIdLong());
+            statement.setLong(3, channel.getIdLong());
 
             statement.executeUpdate();
             return true;
