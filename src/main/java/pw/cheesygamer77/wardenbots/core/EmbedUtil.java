@@ -12,4 +12,11 @@ public final class EmbedUtil {
                 .setColor(DiscordColor.BRAND_GREEN)
                 .build();
     }
+
+    public static @NotNull MessageEmbed getFailure(@NotNull String description) {
+        return new EmbedBuilder()
+                .setDescription(":x: " + description)
+                .setColor(DiscordColor.BRAND_RED)
+                .build();
+    }
 }
