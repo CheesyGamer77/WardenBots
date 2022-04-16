@@ -61,8 +61,12 @@ public final class DatabaseManager {
 
             if(!rs.isClosed())
                 // add each entry to the output map
-                for (ModLogChannel channel : ModLogChannel.values())
-                    out.put(channel, rs.getLong(channel.getDatabaseColumnName()));
+                // longs are (very annoyingly) returned as 0 when set to null (or just not set at all..)
+                for (ModLogChannel channel : ModLogChannel.values()) {
+                    long id = rs.getLong(channel.getDatabaseColumnName());
+                    if(id != 0)
+                        out.put(channel, id);
+                }
             else
                 LOGGER.warn(
                         "Got a closed ResultSet while fetching Mod Log Channel configuration for guild "
