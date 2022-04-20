@@ -11,13 +11,12 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.StringUtil;
 import pw.cheesygamer77.cheedautilities.commands.slash.SlashCommand;
+import pw.cheesygamer77.wardenbots.internal.TimeUtil;
 
 import java.time.Instant;
-import java.time.temporal.TemporalAccessor;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -27,14 +26,6 @@ public class WhoisCommand extends SlashCommand {
                 Commands.slash("whois", "Returns information about a user")
                         .addOption(OptionType.USER, "user", "The user to get information about")
         );
-    }
-
-    /**
-     * Returns the {@link TimeFormat#DATE_TIME_SHORT}, followed by the {@link TimeFormat#RELATIVE} parenthesized
-     * @return The string containing the above
-     */
-    private static @NotNull String getTimeDescription(@NotNull TemporalAccessor accessor) {
-        return TimeFormat.DATE_TIME_SHORT.format(accessor) + " (" + TimeFormat.RELATIVE.format(accessor) + ")";
     }
 
     private static @NotNull String getUserFlagEmojiString(@NotNull User.UserFlag flag) {
@@ -125,7 +116,7 @@ public class WhoisCommand extends SlashCommand {
             if(member != null) {
                 baseEmbed.setColor(member.getColor());
 
-                StringBuilder statusBase = new StringBuilder("Joined " + getTimeDescription(member.getTimeJoined()));
+                StringBuilder statusBase = new StringBuilder("Joined " + TimeUtil.getTimeDescription(member.getTimeJoined()));
                 // is the member timed out?
                 if (member.isTimedOut()) {
                     statusBase.insert(0, "TIMED OUT\n");
