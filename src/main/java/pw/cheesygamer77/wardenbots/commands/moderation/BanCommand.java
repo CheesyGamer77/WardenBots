@@ -1,4 +1,4 @@
-package pw.cheesygamer77.wardenbots.commands;
+package pw.cheesygamer77.wardenbots.commands.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.DiscordColor;
 import pw.cheesygamer77.cheedautilities.commands.slash.SlashCommand;
@@ -16,7 +17,13 @@ public class BanCommand extends SlashCommand {
     public BanCommand() {
         super(Commands.slash("ban", "Bans a user from the server")
                 .addOption(OptionType.USER, "user", "The user to ban", true)
-                .addOption(OptionType.STRING, "reason", "The reason behind banning the user"));
+                .addOption(OptionType.STRING, "reason", "The reason behind banning the user")
+                .addOptions(new OptionData(
+                        OptionType.INTEGER,
+                        "delete_days",
+                        "The number of days to delete messages sent by the user")
+                        .setRequiredRange(0, 7)
+                ));
         addPredicate(event -> event.getMember() != null && event.getMember().hasPermission(Permission.BAN_MEMBERS));
     }
 
@@ -42,9 +49,14 @@ public class BanCommand extends SlashCommand {
         if(reasonMapping != null)
             reason = reasonMapping.getAsString();
 
+        // get the number of days to delete their messages, or default to 0 days
+        OptionMapping daysMapping = event.getOption("delete_days");
+        int deleteDays = 0;
+        if(daysMapping != null) deleteDays = daysMapping.getAsInt();
+
         // do the banning
         // TODO: Add modlog
-        event.getGuild().ban(target, 0)
+        event.getGuild().ban(target, deleteDays)
                 .reason(reason)
                 .flatMap(ra -> hook.editOriginalEmbeds(new EmbedBuilder()
                         .setDescription(":white_check_mark: " + target.getAsTag() + " was banned")
