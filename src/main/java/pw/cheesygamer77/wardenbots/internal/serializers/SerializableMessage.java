@@ -1,5 +1,6 @@
 package pw.cheesygamer77.wardenbots.internal.serializers;
 
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,8 +26,10 @@ public final class SerializableMessage implements Serializable {
         this.author = new SerializableUser(message.getAuthor());
         this.createdAt = message.getTimeCreated();
 
-        // TODO: This throws IllegalStateException with messages built from MessageBuilder
-        this.channel = new SerializableTextChannel(message.getTextChannel());
+        if(message.getChannelType() == ChannelType.TEXT)
+            this.channel = new SerializableTextChannel(message.getTextChannel());
+        else
+            this.channel = null;
     }
 
     public long getId() {
