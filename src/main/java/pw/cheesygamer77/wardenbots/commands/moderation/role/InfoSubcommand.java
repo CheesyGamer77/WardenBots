@@ -1,4 +1,4 @@
-package pw.cheesygamer77.wardenbots.commands.role;
+package pw.cheesygamer77.wardenbots.commands.moderation.role;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;

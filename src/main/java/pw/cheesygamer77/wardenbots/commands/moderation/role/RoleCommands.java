@@ -1,4 +1,4 @@
-package pw.cheesygamer77.wardenbots.commands.role;
+package pw.cheesygamer77.wardenbots.commands.moderation.role;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -9,6 +9,8 @@ public class RoleCommands extends SlashCommand {
     public RoleCommands() {
         super(Commands.slash("role", "Role Commands"));
         addSubcommand(new InfoSubcommand());
+        addSubcommand(new AddSubcommand());
+        addSubcommand(new RemoveSubcommand());
     }
 
     @Override
