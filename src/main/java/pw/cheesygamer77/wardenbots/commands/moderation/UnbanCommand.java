@@ -1,7 +1,6 @@
 package pw.cheesygamer77.wardenbots.commands.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -10,14 +9,13 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.DiscordColor;
-import pw.cheesygamer77.cheedautilities.commands.slash.SlashCommand;
+import pw.cheesygamer77.wardenbots.internal.commands.BanPermissionLockedSlashCommand;
 
-public class UnbanCommand extends SlashCommand {
+public class UnbanCommand extends BanPermissionLockedSlashCommand {
     public UnbanCommand() {
         super(Commands.slash("unban", "Unbans a user from the server")
                 .addOption(OptionType.USER, "user", "The user to unban", true)
                 .addOption(OptionType.STRING, "reason", "The reason behind unbanning the user"));
-        addPredicate(event -> event.getMember() != null && event.getMember().hasPermission(Permission.BAN_MEMBERS));
     }
 
 

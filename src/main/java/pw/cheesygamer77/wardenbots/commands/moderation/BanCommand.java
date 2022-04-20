@@ -1,7 +1,6 @@
 package pw.cheesygamer77.wardenbots.commands.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -11,9 +10,9 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.DiscordColor;
-import pw.cheesygamer77.cheedautilities.commands.slash.SlashCommand;
+import pw.cheesygamer77.wardenbots.internal.commands.BanPermissionLockedSlashCommand;
 
-public class BanCommand extends SlashCommand {
+public class BanCommand extends BanPermissionLockedSlashCommand {
     public BanCommand() {
         super(Commands.slash("ban", "Bans a user from the server")
                 .addOption(OptionType.USER, "user", "The user to ban", true)
@@ -24,7 +23,6 @@ public class BanCommand extends SlashCommand {
                         "The number of days to delete messages sent by the user")
                         .setRequiredRange(0, 7)
                 ));
-        addPredicate(event -> event.getMember() != null && event.getMember().hasPermission(Permission.BAN_MEMBERS));
     }
 
     @Override
