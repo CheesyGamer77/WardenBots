@@ -11,12 +11,12 @@ import net.dv8tion.jda.api.utils.data.DataObject;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.cheedautilities.commands.CommandListener;
-import pw.cheesygamer77.wardenbots.commands.BanCommand;
-import pw.cheesygamer77.wardenbots.commands.UnbanCommand;
-import pw.cheesygamer77.wardenbots.commands.WhoisCommand;
-import pw.cheesygamer77.wardenbots.commands.clean.CleanCommands;
 import pw.cheesygamer77.wardenbots.commands.config.ConfigCommands;
-import pw.cheesygamer77.wardenbots.commands.role.RoleCommands;
+import pw.cheesygamer77.wardenbots.commands.moderation.BanCommand;
+import pw.cheesygamer77.wardenbots.commands.moderation.UnbanCommand;
+import pw.cheesygamer77.wardenbots.commands.moderation.clean.CleanCommands;
+import pw.cheesygamer77.wardenbots.commands.moderation.role.RoleCommands;
+import pw.cheesygamer77.wardenbots.commands.utility.WhoisCommand;
 
 import javax.security.auth.login.LoginException;
 import java.io.InputStream;
