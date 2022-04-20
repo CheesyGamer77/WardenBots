@@ -12,6 +12,7 @@ import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.cheedautilities.commands.CommandListener;
 import pw.cheesygamer77.wardenbots.commands.config.ConfigCommands;
+import pw.cheesygamer77.wardenbots.commands.moderation.BadnickCommand;
 import pw.cheesygamer77.wardenbots.commands.moderation.BanCommand;
 import pw.cheesygamer77.wardenbots.commands.moderation.UnbanCommand;
 import pw.cheesygamer77.wardenbots.commands.moderation.clean.CleanCommands;
@@ -54,6 +55,7 @@ public class Main {
         commandListener.addCommand(new UnbanCommand());
         commandListener.addCommand(new RoleCommands());
         commandListener.addCommand(new ConfigCommands());
+        commandListener.addCommand(new BadnickCommand());
 
         // build JDA
         JDABuilder.createDefault(config.getString("token"))
