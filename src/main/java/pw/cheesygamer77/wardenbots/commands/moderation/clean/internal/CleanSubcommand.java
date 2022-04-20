@@ -1,4 +1,4 @@
-package pw.cheesygamer77.wardenbots.commands.clean.internal;
+package pw.cheesygamer77.wardenbots.commands.moderation.clean.internal;
 
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.commands.slash.Subcommand;
-import pw.cheesygamer77.wardenbots.commands.clean.CleanCommands;
+import pw.cheesygamer77.wardenbots.commands.moderation.clean.CleanCommands;
 import pw.cheesygamer77.wardenbots.core.EmbedUtil;
 
 import java.util.concurrent.CompletableFuture;
@@ -19,10 +19,6 @@ import java.util.stream.Collectors;
 public abstract class CleanSubcommand extends Subcommand {
     public CleanSubcommand(@NotNull String name, @NotNull String description) {
         super(new SubcommandData(name, description).addOptions(CleanCommands.COUNT_OPTION, CleanCommands.CHANNEL_OPTION));
-    }
-
-    public CleanSubcommand(@NotNull SubcommandData data) {
-        super(data.addOptions(CleanCommands.COUNT_OPTION, CleanCommands.CHANNEL_OPTION));
     }
 
     public abstract @NotNull Predicate<Message> getPredicate();
