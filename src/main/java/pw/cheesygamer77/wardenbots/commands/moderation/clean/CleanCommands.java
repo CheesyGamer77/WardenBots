@@ -1,4 +1,4 @@
-package pw.cheesygamer77.wardenbots.commands.clean;
+package pw.cheesygamer77.wardenbots.commands.moderation.clean;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -26,8 +26,6 @@ public class CleanCommands extends SlashCommand {
         addPredicate(event -> event.getGuild() != null && Objects.requireNonNull(event.getMember()).hasPermission(Permission.MESSAGE_MANAGE));
         addSubcommand(new AnySubcommand());
         addSubcommand(new BotsSubcommand());
-        addSubcommand(new HumansSubcommand());
-        addSubcommand(new TextSubcommand());
     }
 
     @Override
