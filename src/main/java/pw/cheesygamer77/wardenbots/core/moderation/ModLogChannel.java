@@ -53,7 +53,7 @@ public enum ModLogChannel {
      * @param guild The guild to retrieve the mod log channel for
      * @return The channel corresponding for this type if successfully found, null otherwise
      */
-    public @Nullable TextChannel fetch(@NotNull Guild guild) {
+    public @Nullable TextChannel fetchLogChannel(@NotNull Guild guild) {
         return DatabaseManager.fetchModLogChannel(guild, this);
     }
 }
