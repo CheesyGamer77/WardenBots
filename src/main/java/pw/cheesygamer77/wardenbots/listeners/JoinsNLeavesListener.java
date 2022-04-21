@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import pw.cheesygamer77.cheedautilities.DiscordColor;
 import pw.cheesygamer77.wardenbots.core.builders.EmbedBuilder;
-import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.ModLogEvent;
 
 import java.time.Instant;
 
@@ -20,7 +20,7 @@ public class JoinsNLeavesListener extends ListenerAdapter {
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         // TODO: Add Anti-Raid integration
 
-        TextChannel channel = ModLogChannel.JOINS.fetch(event.getGuild());
+        TextChannel channel = ModLogEvent.JOINS.fetchLogChannel(event.getGuild());
         if(channel != null) {
             Member member = event.getMember();
             String memberID = member.getId();
@@ -49,7 +49,7 @@ public class JoinsNLeavesListener extends ListenerAdapter {
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
         // TODO: Add checks for leaves vs kicks vs bans
 
-        TextChannel channel = ModLogChannel.LEAVES.fetch(event.getGuild());
+        TextChannel channel = ModLogEvent.LEAVES.fetchLogChannel(event.getGuild());
         if(channel != null) {
             User user = event.getUser();
             String userID = user.getId();

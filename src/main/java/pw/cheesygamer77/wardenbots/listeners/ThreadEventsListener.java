@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.cheedautilities.DiscordColor;
 import pw.cheesygamer77.wardenbots.core.builders.EmbedBuilder;
-import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.ModLogEvent;
 
 import java.time.Instant;
 import java.util.Locale;
@@ -65,7 +65,7 @@ public class ThreadEventsListener extends ListenerAdapter {
     @Override
     public void onChannelCreate(@NotNull ChannelCreateEvent event) {
         if(event.getChannelType().isThread()) {
-            TextChannel channel = ModLogChannel.THREAD_EVENTS.fetch(event.getGuild());
+            TextChannel channel = ModLogEvent.THREAD_EVENTS.fetchLogChannel(event.getGuild());
             if(channel != null) {
                 long threadID = event.getChannel().getIdLong();
 
@@ -87,7 +87,7 @@ public class ThreadEventsListener extends ListenerAdapter {
     @Override
     public void onChannelDelete(@NotNull ChannelDeleteEvent event) {
         if(event.getChannelType().isThread()) {
-            TextChannel channel = ModLogChannel.THREAD_EVENTS.fetch(event.getGuild());
+            TextChannel channel = ModLogEvent.THREAD_EVENTS.fetchLogChannel(event.getGuild());
             if(channel != null)
                 channel.sendMessage(
                         new MessageBuilder()

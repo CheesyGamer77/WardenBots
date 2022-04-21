@@ -14,7 +14,7 @@ import java.util.Locale;
  *
  * NOTE: Each value directly corresponds to the name of a column within the
  */
-public enum ModLogChannel {
+public enum ModLogEvent {
     MOD_ACTIONS,
     JOINS,
     LEAVES,

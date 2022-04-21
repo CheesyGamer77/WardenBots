@@ -15,7 +15,7 @@ import pw.cheesygamer77.cheedautilities.DiscordColor;
 import pw.cheesygamer77.cheedautilities.commands.ChoiceUtil;
 import pw.cheesygamer77.cheedautilities.commands.slash.Subcommand;
 import pw.cheesygamer77.wardenbots.core.EmbedUtil;
-import pw.cheesygamer77.wardenbots.core.moderation.ModLogChannel;
+import pw.cheesygamer77.wardenbots.core.moderation.ModLogEvent;
 import pw.cheesygamer77.wardenbots.internal.db.DatabaseManager;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class ModLogSubcommand extends Subcommand {
     public ModLogSubcommand() {
         super(new SubcommandData("modlogs", "Mod Log configuration commands").addOptions(
                 new OptionData(OptionType.STRING, "type", "The type of mod log channel to get or set")
-                        .addChoices(ChoiceUtil.fromEnum(ModLogChannel.class)),
+                        .addChoices(ChoiceUtil.fromEnum(ModLogEvent.class)),
                 new OptionData(OptionType.CHANNEL, "channel", "If specified, the channel to set for the mod log type")
                         .setChannelTypes(ChannelType.TEXT)
         ));
@@ -38,9 +38,9 @@ public class ModLogSubcommand extends Subcommand {
                 .setColor(DiscordColor.BLURPLE)
                 .setFooter("Guild ID: " + guild.getId());
 
-        HashMap<ModLogChannel, Long> channelMapping = DatabaseManager.fetchAllModLogChannels(guild);
+        HashMap<ModLogEvent, Long> channelMapping = DatabaseManager.fetchAllModLogChannels(guild);
         StringBuilder descriptionBuilder = new StringBuilder();
-        for(ModLogChannel type : ModLogChannel.values()) {
+        for(ModLogEvent type : ModLogEvent.values()) {
             Long channelId = channelMapping.getOrDefault(type, null);
             descriptionBuilder
                     .append("• `").append(type.getTitle()).append("`: ")  // channel key
@@ -51,8 +51,8 @@ public class ModLogSubcommand extends Subcommand {
         return base.setDescription(descriptionBuilder.toString()).build();
     }
 
-    private @NotNull MessageEmbed getChannelTypeConfigurationEmbed(@NotNull Guild guild, @NotNull ModLogChannel type) {
-        TextChannel channel = type.fetch(guild);
+    private @NotNull MessageEmbed getChannelTypeConfigurationEmbed(@NotNull Guild guild, @NotNull ModLogEvent type) {
+        TextChannel channel = type.fetchLogChannel(guild);
 
         StringBuilder descriptionBuilder = new StringBuilder()
                 .append("Mod Log Type `").append(type.getTitle()).append("` is ");
@@ -83,7 +83,7 @@ public class ModLogSubcommand extends Subcommand {
         if(typeMapping == null)
             embed = getFullConfigurationEmbed(guild);
         else {
-            ModLogChannel type = ModLogChannel.valueOf(
+            ModLogEvent type = ModLogEvent.valueOf(
                     typeMapping.getAsString()
                             .toUpperCase(Locale.ROOT)
                             .replace(" ", "_")
