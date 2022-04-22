@@ -24,12 +24,8 @@ public final class DatabaseManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
     private static final String JDBC_URL = "jdbc:sqlite:warden.db";
 
-    /**
-     * Returns the JDBC URL for the database
-     * @return The url
-     */
-    public static String getURL() {
-        return JDBC_URL;
+    private static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(JDBC_URL);
     }
 
     private static void logQueryError(Throwable error) {
@@ -52,7 +48,7 @@ public final class DatabaseManager {
     public static @NotNull HashMap<ModLogEvent, Long> fetchAllModLogChannels(@NotNull Guild guild) {
         HashMap<ModLogEvent, Long> out = new HashMap<>();
 
-        try (Connection connection = DriverManager.getConnection(getURL())) {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM " + Table.MODLOG_CHANNELS + " WHERE Guild = ?"
             );
@@ -115,7 +111,7 @@ public final class DatabaseManager {
         String guildHash = Hasher.hashify(guild.getId());
         String columnName = type.getDatabaseColumnName();
 
-        try(Connection connection = DriverManager.getConnection(getURL())) {
+        try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + Table.MODLOG_CHANNELS + "(Guild, " + columnName + ") VALUES (?, ?) " +
                             "ON CONFLICT(Guild) DO UPDATE SET " + columnName + " = ?"
@@ -144,7 +140,7 @@ public final class DatabaseManager {
     private static void registerNewGuild(@NotNull Long guildID) {
         String guildHash = Hasher.hashify(guildID);
 
-        try (Connection connection = DriverManager.getConnection(getURL())) {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT OR IGNORE INTO " + Table.MODLOG_CHANNELS + "(Guild) VALUES (?)"
             );
@@ -185,7 +181,7 @@ public final class DatabaseManager {
      * @see UserReputation.Level
      */
     public static void setUserReputation(@NotNull Member member, double value) {
-        try (Connection connection = DriverManager.getConnection(getURL())) {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + Table.USER_REPUTATION + "(User, Guild, ReputationLevel) VALUES (?, ?, ?) " +
                             "ON CONFLICT(User, Guild) DO UPDATE SET ReputationLevel = ?"
@@ -213,7 +209,7 @@ public final class DatabaseManager {
      * @return The user's reputation
      */
     public static @NotNull UserReputation fetchUserReputation(@NotNull Member member) {
-        try (Connection connection = DriverManager.getConnection(getURL())) {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM " + Table.USER_REPUTATION + " WHERE User = ? AND Guild = ?"
             );
@@ -238,7 +234,7 @@ public final class DatabaseManager {
     }
 
     public static @NotNull UserType fetchUserType(@NotNull User user) {
-        try (Connection connection = DriverManager.getConnection(getURL())) {
+        try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM " + Table.GLOBAL_USER_DATA + " WHERE User = ? LIMIT 1"
             );
