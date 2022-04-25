@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.UnavailableGuildJoinedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pw.cheesygamer77.wardenbots.core.UserType;
@@ -38,12 +37,11 @@ public final class DatabaseManager {
      * Fetches the {@link pw.cheesygamer77.wardenbots.internal.db.internal.GuildLogConfiguration} for a particular
      * {@link Guild}.
      * <br>This fetches the entire configuration. To fetch an exact {@link TextChannel} mod log channel,
-     * use {@link DatabaseManager#fetchModLogChannel(Guild, ModLogEvent)} instead.
+     * use {@link CachedResources#getLogChannel(ModLogEvent, Guild)} instead.
      *
      * If an error occurs or there is no configuration for the guild, an empty mapping will be returned.
      * @param guild The guild to fetch the log configuration for
      * @return The configuration object
-     * @see DatabaseManager#fetchModLogChannel(Guild, ModLogEvent)
      * @see DatabaseManager#setModLogChannel(ModLogEvent, TextChannel)
      */
     public static @NotNull GuildLogConfiguration fetchLogChannelConfiguration(@NotNull Guild guild) {
@@ -80,31 +78,10 @@ public final class DatabaseManager {
     }
 
     /**
-     * Fetches a {@link TextChannel} designated as a particular {@link ModLogEvent} for a {@link Guild}
-     * @param guild The guild to fetch the channel from
-     * @param event The log event to fetch the log channel of
-     * @return The {@link TextChannel} used for a particular {@link ModLogEvent}, or null if it doesn't exist.
-     * @see DatabaseManager#setModLogChannel(ModLogEvent, TextChannel)
-     */
-    public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModLogEvent event) {
-        GuildLogConfiguration config = fetchLogChannelConfiguration(guild);
-
-        Long channelID = config.getChannelID(event);
-        if(channelID != null) {
-            TextChannel out = guild.getTextChannelById(channelID);
-            if(out != null && out.canTalk())
-                return out;
-        }
-
-        return null;
-    }
-
-    /**
      * Sets a {@link TextChannel} to be used as a particular {@link Guild}'s {@link ModLogEvent}
      * @param type The {@link ModLogEvent} type to set the channel to
      * @param channel The {@link TextChannel} to set as the log channel
      * @return Whether the channel was set successfully or not
-     * @see DatabaseManager#fetchModLogChannel(Guild, ModLogEvent)
      * @see DatabaseManager#fetchLogChannelConfiguration(Guild)
      */
     public static boolean setModLogChannel(@NotNull ModLogEvent type, @NotNull TextChannel channel) {
