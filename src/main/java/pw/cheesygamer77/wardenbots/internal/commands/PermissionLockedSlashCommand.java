@@ -29,7 +29,7 @@ public abstract class PermissionLockedSlashCommand extends SlashCommand {
         for(Permission permission : this.permissionsRequired) {
             if(!event.getMember().hasPermission(permission)) {
                 event.replyEmbeds(EmbedUtil.getFailure(
-                        "The `" + permission.getName() + "` is required to use this command"))
+                        "The `" + permission.getName() + "` permission is required to use this command"))
                         .setEphemeral(true)
                         .queue();
                 return;
