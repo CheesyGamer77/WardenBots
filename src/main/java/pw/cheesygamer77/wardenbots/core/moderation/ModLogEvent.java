@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pw.cheesygamer77.wardenbots.internal.db.DatabaseManager;
+import pw.cheesygamer77.wardenbots.internal.db.CachedResources;
 
 import java.util.Locale;
 
@@ -54,6 +54,6 @@ public enum ModLogEvent {
      * @return The channel corresponding for this type if successfully found, null otherwise
      */
     public @Nullable TextChannel fetchLogChannel(@NotNull Guild guild) {
-        return DatabaseManager.fetchModLogChannel(guild, this);
+        return CachedResources.getLogChannel(this, guild);
     }
 }

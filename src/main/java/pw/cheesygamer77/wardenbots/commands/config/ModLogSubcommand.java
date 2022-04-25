@@ -16,9 +16,9 @@ import pw.cheesygamer77.cheedautilities.commands.ChoiceUtil;
 import pw.cheesygamer77.cheedautilities.commands.slash.Subcommand;
 import pw.cheesygamer77.wardenbots.core.EmbedUtil;
 import pw.cheesygamer77.wardenbots.core.moderation.ModLogEvent;
-import pw.cheesygamer77.wardenbots.internal.db.DatabaseManager;
+import pw.cheesygamer77.wardenbots.internal.db.CachedResources;
+import pw.cheesygamer77.wardenbots.internal.db.internal.GuildLogConfiguration;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 public class ModLogSubcommand extends Subcommand {
@@ -38,10 +38,10 @@ public class ModLogSubcommand extends Subcommand {
                 .setColor(DiscordColor.BLURPLE)
                 .setFooter("Guild ID: " + guild.getId());
 
-        HashMap<ModLogEvent, Long> channelMapping = DatabaseManager.fetchAllModLogChannels(guild);
+        GuildLogConfiguration config = CachedResources.getLogConfiguration(guild);
         StringBuilder descriptionBuilder = new StringBuilder();
         for(ModLogEvent type : ModLogEvent.values()) {
-            Long channelId = channelMapping.getOrDefault(type, null);
+            Long channelId = config.getChannelID(type);
             descriptionBuilder
                     .append("• `").append(type.getTitle()).append("`: ")  // channel key
                     .append(channelId == null ? "[NOT SET]" : "<#" + channelId + "> (`" + channelId + "`)")  // channel mention + id
@@ -93,16 +93,13 @@ public class ModLogSubcommand extends Subcommand {
             if(channelMapping == null)
                 embed = getChannelTypeConfigurationEmbed(guild, type);
             else {
-                // set modlog channel
+                // set log channel
                 TextChannel channel = channelMapping.getAsTextChannel();
                 if(channel != null) {
-                    boolean success = DatabaseManager.setModLogChannel(type, channelMapping.getAsTextChannel(), guild);
-                    if(success)
-                        embed = EmbedUtil.getSuccess("Set `" + type.getTitle() + "` logging channel to " +
-                                channel.getAsMention() + " (channel id: `" + channel.getId() + "`)"
-                        );
-                    else
-                        embed = EmbedUtil.getFailure("Something went very wrong. Please contact my developer.");
+                    CachedResources.setLogChannel(type, channelMapping.getAsTextChannel());
+                    embed = EmbedUtil.getSuccess("Set `" + type.getTitle() + "` logging channel to " +
+                            channel.getAsMention() + " (channel id: `" + channel.getId() + "`)"
+                    );
                 }
                 else
                     embed = EmbedUtil.getFailure("Only Text Channels are allowed to be used as logging channels");

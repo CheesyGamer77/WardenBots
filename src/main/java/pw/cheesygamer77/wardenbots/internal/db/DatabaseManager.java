@@ -13,12 +13,14 @@ import pw.cheesygamer77.wardenbots.core.UserType;
 import pw.cheesygamer77.wardenbots.core.moderation.ModLogEvent;
 import pw.cheesygamer77.wardenbots.core.moderation.UserReputation;
 import pw.cheesygamer77.wardenbots.internal.Hasher;
+import pw.cheesygamer77.wardenbots.internal.db.internal.GuildLogConfiguration;
 
 import java.sql.*;
 import java.util.HashMap;
 
 /**
  * Misc utility functions used to make queries to the database
+ * <br>NOTE: Access to cached data should be done through the methods provided by {@link CachedResources}
  */
 public final class DatabaseManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
@@ -33,19 +35,18 @@ public final class DatabaseManager {
     }
 
     /**
-     * Fetches the mod log channel configuration for a particular {@link Guild}.
-     *
-     * This fetches the entire configuration. To fetch an exact {@link TextChannel} mod log channel,
+     * Fetches the {@link pw.cheesygamer77.wardenbots.internal.db.internal.GuildLogConfiguration} for a particular
+     * {@link Guild}.
+     * <br>This fetches the entire configuration. To fetch an exact {@link TextChannel} mod log channel,
      * use {@link DatabaseManager#fetchModLogChannel(Guild, ModLogEvent)} instead.
      *
      * If an error occurs or there is no configuration for the guild, an empty mapping will be returned.
-     * @param guild The guild to fetch the mod log channels for
-     * @return A Hash Map of {@link ModLogEvent} and Long pairs. Each Long corresponds to the stored
-     * channel ID for the particular ModlogChannel.
+     * @param guild The guild to fetch the log configuration for
+     * @return The configuration object
      * @see DatabaseManager#fetchModLogChannel(Guild, ModLogEvent)
-     * @see DatabaseManager#setModLogChannel(ModLogEvent, TextChannel, Guild)
+     * @see DatabaseManager#setModLogChannel(ModLogEvent, TextChannel)
      */
-    public static @NotNull HashMap<ModLogEvent, Long> fetchAllModLogChannels(@NotNull Guild guild) {
+    public static @NotNull GuildLogConfiguration fetchLogChannelConfiguration(@NotNull Guild guild) {
         HashMap<ModLogEvent, Long> out = new HashMap<>();
 
         try (Connection connection = getConnection()) {
@@ -75,20 +76,20 @@ public final class DatabaseManager {
             logQueryError(error);
         }
 
-        return out;
+        return new GuildLogConfiguration(out);
     }
 
     /**
      * Fetches a {@link TextChannel} designated as a particular {@link ModLogEvent} for a {@link Guild}
      * @param guild The guild to fetch the channel from
-     * @param channel The channel type to fetch
+     * @param event The log event to fetch the log channel of
      * @return The {@link TextChannel} used for a particular {@link ModLogEvent}, or null if it doesn't exist.
-     * @see DatabaseManager#setModLogChannel(ModLogEvent, TextChannel, Guild)
+     * @see DatabaseManager#setModLogChannel(ModLogEvent, TextChannel)
      */
-    public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModLogEvent channel) {
-        HashMap<ModLogEvent, Long> channelIDMapping = fetchAllModLogChannels(guild);
+    public static @Nullable TextChannel fetchModLogChannel(@NotNull Guild guild, @NotNull ModLogEvent event) {
+        GuildLogConfiguration config = fetchLogChannelConfiguration(guild);
 
-        Long channelID = channelIDMapping.getOrDefault(channel, null);
+        Long channelID = config.getChannelID(event);
         if(channelID != null) {
             TextChannel out = guild.getTextChannelById(channelID);
             if(out != null && out.canTalk())
@@ -102,13 +103,12 @@ public final class DatabaseManager {
      * Sets a {@link TextChannel} to be used as a particular {@link Guild}'s {@link ModLogEvent}
      * @param type The {@link ModLogEvent} type to set the channel to
      * @param channel The {@link TextChannel} to set as the log channel
-     * @param guild The {@link Guild} to set the {@link ModLogEvent} of
      * @return Whether the channel was set successfully or not
      * @see DatabaseManager#fetchModLogChannel(Guild, ModLogEvent)
-     * @see DatabaseManager#fetchAllModLogChannels(Guild)
+     * @see DatabaseManager#fetchLogChannelConfiguration(Guild)
      */
-    public static boolean setModLogChannel(@NotNull ModLogEvent type, @NotNull TextChannel channel, @NotNull Guild guild) {
-        String guildHash = Hasher.hashify(guild.getId());
+    public static boolean setModLogChannel(@NotNull ModLogEvent type, @NotNull TextChannel channel) {
+        String guildHash = Hasher.hashify(channel.getGuild().getId());
         String columnName = type.getDatabaseColumnName();
 
         try(Connection connection = getConnection()) {
