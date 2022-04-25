@@ -91,14 +91,17 @@ public class MessageEventsListener extends ListenerAdapter {
             if (messageCache.containsKey(messageID)) {
                 // message is currently cached
                 SerializableMessage entry = messageCache.get(messageID);
+
+                // don't log message updates unless they're edits
+                if(entry.getContent().equals(after.getContentRaw())) return;
+
                 base.setTitle("Message Edited")
                         .addFields(entry.getContent(), true, "Before")
                         .setFooter(after)
                         .setTimestamp(Instant.now());
             }
-            else {
-                base.setTitle("Message Edited (Uncached)");
-            }
+            else
+                return;
 
             base.addFields(after, true, "After");
 
